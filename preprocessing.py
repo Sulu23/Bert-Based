@@ -1,3 +1,4 @@
+# preprocessing.py
 #The the data files as input, and output the edible data for the model
 import re
 import string
@@ -61,7 +62,7 @@ def concaternate_tokens(data, predictions):
                 # remove first character and start new word
                 word = token[1:]
 
-            # the first word is not taken into account by the precious if. So this is done now. 
+            # the first word is not taken into account by the precious if c;ause. So this is done now. 
             elif token[0] == "▁":
                 word = token[1:]
 
@@ -85,14 +86,9 @@ def concaternate_tokens(data, predictions):
             list_of_words.append(word)
 
         print(list_of_words, '\n')
-
-
-
-    # silly way of printing predictions and tokens
-    #i = 0
-    #for label in predictions:
-    #    print("\nTokens: " , tokens[i])
-    #    print("Labels: " ,label)
-    #    print("len tokens: ", len(tokens[i]), "len labels: ", len(label))
-    #    i += 1
   
+  # postprocessing errors:
+  # gold:       this program:
+  # "'s"        "'", "s"     
+  # "@m_boy"    "@m", "-", "boy"
+  # ">>>>"       '>', '>>>'
