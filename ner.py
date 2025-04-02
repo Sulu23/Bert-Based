@@ -1,10 +1,10 @@
 # ner.py 
-# Takes takes tokens and predictions and uses spaCy for named entity recognition.
+# Takes tokens and predictions and uses spaCy to add named entity recognition then returns a list of predicted labels.
 
 import spacy
 
 def ner(tokens, labels):       
-    # Joins all tokens to form one string and appends all tokens and all labels into one list. 
+    # Joins all tokens to form one string, appends all tokens into a list and all labels into one list. 
     text = " " 
     token_list = []
     label_list = []
@@ -31,11 +31,14 @@ def ner(tokens, labels):
     for word in processed_text.ents:
         named_entities.append(word.text)
     
-    # Replaces the label of the token with "ner" if it was found by the NER. 
+    # Replaces the label of the token with 'ner' if the token was found by the NER. 
     for entity in named_entities:
             if entity in token_label_dict:
                 token_label_dict[entity] = 'ner'
-    return token_label_dict
     
+    # Adds all labels to one list and returns it    
+    predicted_labels = list(token_label_dict.values())
+    return predicted_labels
+   
     
 
