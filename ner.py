@@ -11,11 +11,11 @@ def ner(tokens, labels):
     for item in tokens:
         tweet = ' '.join(item)
         text = text + tweet + "\n"
-        for word in item:
-            token_list.append(word)
-    for item in predictions:
-        for word in item:
-            label_list.append(word)
+        for token in item:
+            token_list.append(token)
+    for item in labels:
+        for label in item:
+            label_list.append(label)
             
     # Creates dictionary where the labels are mapped to the tokens
     token_label_dict = dict(zip(token_list, label_list))
@@ -33,9 +33,7 @@ def ner(tokens, labels):
     
     # Replaces the label of the token with "ner" if it was found by the NER. 
     for entity in named_entities:
-            print(entity)
             if entity in token_label_dict:
-                print("yes")
                 token_label_dict[entity] = 'ner'
     return token_label_dict
     
