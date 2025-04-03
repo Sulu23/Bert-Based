@@ -5,7 +5,7 @@ from ner import ner
 from evaluation import evaluate
 
 # start by opening the data
-with open("lid_spaeng/debug150.conll") as data:
+with open("lid_spaeng/dev.conll") as data:
     #preprocess data
     p_data = tokens_to_sentences(data)
 
@@ -19,4 +19,4 @@ predictions, tokens = concaternate_tokens(predictions, tokens)
 predicted_labels = ner(tokens, predictions)
 
 # evaluates the model
-evaluate(true_labels, predicted_labels))
+evaluate(true_labels, predicted_labels)
