@@ -4,7 +4,7 @@
 `pip install -r requirements.txt`
 
 **Download spaCy model:**\
-`python -m spacy download xx_ent_wiki_sm`
+`python3 -m spacy download xx_ent_wiki_sm`
 
 # Running the dictionary baseline
 This program is located in the 'dictionary_baseline' directory.\
