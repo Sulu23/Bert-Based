@@ -8,14 +8,14 @@ unks = {'umm', 'ew', 'u*', '#jdm', 'mhmmm', '6hrs', 'ma', 'hmm', 'bamb', '#r', '
 
 def tokens_to_sentences(data):
     tweets = []
-    # make list of tweets, first initiate empty tweet: 
+    # make list of tweets, first initiate empty tweet:
     tweet = ""
     # loop over the data
     for line in data.readlines():
         # skip if empty line
         if len(line) == 0 or line.isspace():
             continue
-        
+
         token = line.split()[0]
 
         # normalization for hyperlinks, #tags and @usernames
@@ -23,7 +23,7 @@ def tokens_to_sentences(data):
         regex_url = "https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}"
         token = re.sub(regex_url, "URLREPLACED", token)
 
-        
+
         # check if new tweet is starting
         if "# sent_enum = " in line:
             # This check is nessesary because I dont want the initialized empty tweet to be appended to the dataset
@@ -38,74 +38,92 @@ def tokens_to_sentences(data):
     # add last tweet
     tweets.append(tweet)
 
-    return tweets 
+    return tweets
 
-def concaternate_tokens(predictions, data):
+
+def concatenate_tokens(predictions, data):
     # The bert tokenizer has split some words into subwords, and has encoded the spaces as an underscore. 
     # this function will concaternate the split tokens, and change the labels accodingly
     # so the data will be suitable for SpaCy.
     all_tokens = []
     all_labels = []
-    
+
     for n, tweet in enumerate(data):
         list_of_words = []
         word = ""
-        # keep track of all labels per word. 
+        # keep track of all labels per word.
         labels_per_word = []
         labels_per_sentence = []
 
         for i, token in enumerate(tweet):
             # concaternate tokens to words (units separated by space in original text)
-            # The ▁ symbol encodes a space in the original tweet, thus new word is starting
-            if token[0] == "▁" and word:
-                # add completed word to list of words
-                list_of_words.append(word)
-                # find correct label and add to list of labels per sentence
-                labels_per_sentence.append(labeler(word, labels_per_word))
-                labels_per_word = []
-                
-                # remove first character and start new word, add label to list of labels
-                word = token[1:]
+            # chr(9601) encodes a space in the original tweet, thus new word is starting
+            if token[0] != chr(9601):
+                word += tweet[i]
                 labels_per_word.append(predictions[n][i])
 
-            # the first word is not taken into account by the precious if cause. So this is done now. 
-            elif token[0] == "▁":
-                word = token[1:]
-                labels_per_word.append(predictions[n][i])
-
-            # take into account that punctuation has to be split from the words
-            # only look at the fist character to avoid separating @users and #'s (because they always begin with the thick underscore)
-            elif token[0] in string.punctuation:
-                # add previous word to list of words
+            elif token[0] == chr(9601):
                 if word:
                     list_of_words.append(word)
                     labels_per_sentence.append(labeler(word, labels_per_word))
-                    labels_per_word = []
 
-                    # add punctuation to list of word
-                    list_of_words.append(token)
-                    labels_per_sentence.append(labeler(word, labels_per_word))
-                    labels_per_word = []
-                    # reset word. 
-                    word = ''
-            else:
-                # In this case, token is a subwords in the middle or end of a word
-                # so append to current word.
-                word = word + token
-                labels_per_word.append(predictions[n][i])
+                word = token[1:]
+                labels_per_word = [predictions[n][i]]
 
-        # append last word, but first check if it is not empty. 
+
         if word:
             list_of_words.append(word)
             labels_per_sentence.append(labeler(word, labels_per_word))
-            labels_per_word = []
-        
+
+
         # append to final dataset
         all_tokens.append(list_of_words)
         all_labels.append(labels_per_sentence)
 
     return all_labels, all_tokens
 
+#            if token[0] == "▁" and word:
+                # add completed word to list of words
+#                list_of_words.append(word)
+                # find correct label and add to list of labels per sentence
+ #               labels_per_sentence.append(labeler(word, labels_per_word))
+  #              labels_per_word = []
+                
+                # remove first character and start new word, add label to list of labels
+ #               word = token[1:]
+  #              labels_per_word.append(predictions[n][i])
+
+            # the first word is not taken into account by the precious if cause. So this is done now. 
+#            elif token[0] == "▁":
+ #               word = token[1:]
+  #              labels_per_word.append(predictions[n][i])
+
+            # take into account that punctuation has to be split from the words
+            # only look at the fist character to avoid separating @users and #'s (because they always begin with the thick underscore)
+ #           elif token[0] in string.punctuation:
+                # add previous word to list of words
+  #              if word:
+   #                 list_of_words.append(word)
+    #                labels_per_sentence.append(labeler(word, labels_per_word))
+     #               labels_per_word = []
+
+                    # add punctuation to list of word
+      #              list_of_words.append(token)
+       #             labels_per_sentence.append(labeler(word, labels_per_word))
+    #                labels_per_word = []
+                    # reset word. 
+     #               word = ''
+      #      else:
+                # In this case, token is a subwords in the middle or end of a word
+                # so append to current word.
+   #             word = word + token
+    #            labels_per_word.append(predictions[n][i])
+
+        # append last word, but first check if it is not empty. 
+  #      if word:
+   #         list_of_words.append(word)
+    #        labels_per_sentence.append(labeler(word, labels_per_word))
+     #       labels_per_word = []
 
 def labeler(word, labels):
     # input: word and all labels attributed to the word by the model
@@ -114,15 +132,15 @@ def labeler(word, labels):
     # label as 'other' if string contains punctuation, but not hashtags
     if word.isalpha() == False and word[0] != '#':
         return 'other'
-    
+
     # All tokens that start with @ are labeled as other
     if word[0]== '@':
         return 'other'
-    
+
     # check hardcoded list of unk labeled tokens from training data, lowecased, because the set is lowercased as well
     if word.lower() in unks:
         return 'unk'
-    
+
     # When a character occurs 3 or more times consecutively in a word, we assume it is an unk. 
     # The regular expression is from: https://stackoverflow.com/questions/6518154/matching-3-or-more-of-the-same-character-in-python/6518192
     if re.search(r'(\w)\1\1', word):
@@ -144,6 +162,6 @@ def labeler(word, labels):
 
   # postprocessing errors:
   # gold:       this program:
-  # "'s"        "'", "s"     
+  # "'s"        "'", "s"
   # "@m_boy"    "@m", "-", "boy"
   # ">>>>"       '>', '>>>'
