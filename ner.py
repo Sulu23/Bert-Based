@@ -31,10 +31,10 @@ def ner(tokens, labels):
     for word in processed_text.ents:
         named_entities.append(word.text)
     
-    # Replaces the label of the token with 'ner' if the token was found by the NER. 
+    # Replaces the label of the token with 'ne' if the token was found by the NER. 
     for entity in named_entities:
             if entity in token_label_dict:
-                token_label_dict[entity] = 'ner'
+                token_label_dict[entity] = 'ne'
     
     # Adds all labels to one list and returns it    
     predicted_labels = list(token_label_dict.values())
