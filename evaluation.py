@@ -18,7 +18,6 @@ def evaluate(true_labels, predicted_labels):
     # label that belongs to a troublesome token
     trouble_maker = predicted_labels.pop(4968)
 
-
     report = metrics.classification_report(y_true=true_labels, y_pred=predicted_labels, zero_division=0.0)
 
     print('***** Evaluation *****')
