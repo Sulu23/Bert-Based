@@ -7,7 +7,6 @@ def model_code_switching(data):
     # The following 2 lines are copies from https://huggingface.co/msislam/code-mixed-language-detection-XLMRoberta
     tokenizer = AutoTokenizer.from_pretrained("msislam/code-mixed-language-detection-XLMRoberta")
     model = AutoModelForTokenClassification.from_pretrained("msislam/code-mixed-language-detection-XLMRoberta")
-    print("ok")
 
     #  Move model to the correct device (CPU or GPU)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
