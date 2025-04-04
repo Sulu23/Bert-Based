@@ -1,44 +1,42 @@
-# ner.py 
-# Takes tokens and predictions and uses spaCy to add named entity recognition then returns a list of predicted labels.
+# ner.py
 
 import spacy
+import copy
 
-def ner(tokens, labels):       
-    # Joins all tokens to form one string, appends all tokens into a list and all labels into one list. 
-    text = " " 
-    token_list = []
-    label_list = []
-    for item in tokens:
-        tweet = ' '.join(item)
-        text = text + tweet + "\n"
-        for token in item:
-            token_list.append(token)
-    for item in labels:
-        for label in item:
-            label_list.append(label)
-            
-    # Creates dictionary where the labels are mapped to the tokens
-    token_label_dict = dict(zip(token_list, label_list))
-    
-    # Loads spaCy model
+def ner(tokens, labels):
+    """ Takes tokens and predictions and uses spaCy to add named entity recognition then returns a list of predicted labels."""
+
+    # Loads multilingual spaCy model
     ml_model = spacy.load("xx_ent_wiki_sm")
-    
-    # Processes text with spaCy NER model
-    processed_text = ml_model(text)
-    
-    # Puts all found named entities into one list.
-    named_entities = []
-    for word in processed_text.ents:
-        named_entities.append(word.text)
-    
-    # Replaces the label of the token with 'ne' if the token was found by the NER. 
-    for entity in named_entities:
-            if entity in token_label_dict:
-                token_label_dict[entity] = 'ne'
-    
-    # Adds all labels to one list and returns it    
-    predicted_labels = list(token_label_dict.values())
-    return predicted_labels
-   
-    
+
+    predictions = copy.deepcopy(labels)
+
+
+    for i, token_list in enumerate(tokens):
+
+        # Joins tokens to form one string
+        text = ' '.join(tokens[i])
+
+        # Processes text with spaCy NER model
+        processed_text = ml_model(text)
+
+        for ent in processed_text.ents:
+
+
+            # Get character span of the named entity
+            ent_start = ent.start_char
+            ent_end = ent.end_char
+
+            for j, token in enumerate(token_list):
+                # Get character span of the token
+                token_start = text.find(token)
+                token_end = token_start + len(token)
+
+                # Add 'ne' tag if token is inside a named entity span
+                if token_start >= ent_start and token_end <= ent_end:
+                    predictions[i][j] = 'ne'
+
+
+    return predictions
+
 
