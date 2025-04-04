@@ -53,7 +53,7 @@ def evaluate(labels, preds):
 
 def main():
     # opens data file
-    filepath = 'data/tsv_dev.conll'
+    filepath = 'svm/tsv_dev.conll'
     file = open(filepath, 'r')
 
     # constructs spanish dictionary
