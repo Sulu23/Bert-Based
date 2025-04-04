@@ -11,7 +11,7 @@ This program is located in the 'dictionary_baseline' directory\
 `python3 dictionary_base.py`
 
 # Running the svm baseline
-This program is located in the 'svm_baseline' directory.\
+This program is located in the 'svm' directory.\
 <br>
 **To use the full dataset for the svm baseline run:**\
 `python svm.py --dataset full`\
