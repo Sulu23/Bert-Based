@@ -18,7 +18,7 @@ def spanish_dict():
     """ constructs and returns set of spanish words """
     spa_dict = set()
 
-    with open('data/es.txt', 'r') as file3:
+    with open('../data/es.txt', 'r') as file3:
         for word in file3:
             spa_dict.add(word.rstrip().lower())
 
@@ -53,7 +53,7 @@ def evaluate(labels, preds):
 
 def main():
     # opens data file
-    filepath = 'svm/tsv_dev.conll'
+    filepath = '../data/tsv_dev.conll'
     file = open(filepath, 'r')
 
     # constructs spanish dictionary
