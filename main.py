@@ -17,10 +17,10 @@ predictions, tokens = model_code_switching(p_data)
 predictions, tokens = concatenate_tokens(predictions, tokens)
 
 # labels named entities and returns predicted labels
-#predicted_labels = ner(tokens, predictions)
+predicted_labels = ner(tokens, predictions)
 
 # extract true labels for evaluation
 true_labels = extract_true_labels("data/tsv_dev.conll")
 
 # evaluates the model
-evaluate(true_labels, predictions)
+evaluate(true_labels, predicted_labels)
