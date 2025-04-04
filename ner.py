@@ -10,7 +10,7 @@ def ner(tokens, labels):
     ml_model = spacy.load("xx_ent_wiki_sm")
 
     predictions = copy.deepcopy(labels)
-
+    skip_list = ["other", "unk"]
 
     for i, token_list in enumerate(tokens):
 
@@ -21,7 +21,6 @@ def ner(tokens, labels):
         processed_text = ml_model(text)
 
         for ent in processed_text.ents:
-
 
             # Get character span of the named entity
             ent_start = ent.start_char
@@ -34,8 +33,8 @@ def ner(tokens, labels):
 
                 # Add 'ne' tag if token is inside a named entity span
                 if token_start >= ent_start and token_end <= ent_end:
-                    predictions[i][j] = 'ne'
-
+                    if predictions[i][j] not in skip_list:
+                        predictions[i][j] = 'ne'
 
     return predictions
 
